@@ -29,9 +29,10 @@ export default function Textarea({
           id={name}
           name={name}
           rows={rows && 3}
-          className={classNames(  errors[name]
-            ? "placeholder-red-300"
-            : "" , "block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm")}
+          className={classNames(
+            errors[name] ? "placeholder-red-300" : "",
+            "block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+          )}
           {...rest}
         />
       </div>

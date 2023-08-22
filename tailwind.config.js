@@ -13,9 +13,9 @@ module.exports = {
         "c-gray-200": "#00000099",
       },
     },
-    // colors: {
-    //   "c-orange-200": "#fff7e6",
-    // },
   },
-  plugins: [require("@tailwindcss/aspect-ratio")],
+  plugins: [
+    require("@tailwindcss/aspect-ratio"),
+    require("@tailwindcss/forms"),
+  ],
 };

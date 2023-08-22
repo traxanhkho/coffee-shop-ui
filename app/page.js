@@ -1,6 +1,6 @@
 "use client";
 import ContainerWrapper from "@/components/ContainerWrapper";
-import GenreGroup from "@/components/GenreGroup";
+import CategorySelect from "@/components/CategorySelect";
 import Layouts from "@/components/Layouts";
 import ProductGroup from "@/components/ProductGroup";
 
@@ -9,7 +9,7 @@ export default function Home() {
     <Layouts>
       <div className="mt-8">
         <ContainerWrapper>
-          <GenreGroup />
+          <CategorySelect />
         </ContainerWrapper>
         <ProductGroup />
       </div>

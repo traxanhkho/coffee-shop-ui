@@ -1,17 +1,21 @@
 "use client";
 import { classNames } from "@/utils/classNames";
+import { useFormContext } from "react-hook-form";
 
 export default function Input({
-  register,
   name,
   type,
   label,
   placeholder,
   className,
-  errors,
-  isPriceField , 
+  isPriceField,
   ...rest
 }) {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
+
   return (
     <div>
       <div

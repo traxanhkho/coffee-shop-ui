@@ -1,34 +1,16 @@
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
-import { Fragment } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Disclosure } from "@headlessui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import {
-  Bars3Icon,
-  BellIcon,
-  ShoppingCartIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import DropdownCart from "./common/DropdownCart";
 import Link from "next/link";
+import LoginAvatar from "./common/LoginAvatar";
+import LogoutButton from "./common/LogoutButton";
+import { useCustomer } from "@/context/CustomerContext";
 
 const navigation = [
-  { name: "Trang chủ", href: "#", current: true },
-  { name: "Thông tin cá nhân", href: "#", current: false },
-  { name: "Giỏ hàng", href: "#", current: false },
-  { name: "Tình trạng đơn hàng", href: "#", current: false },
+  { name: "Trang chủ", href: "/", current: true },
+  { name: "Thông tin cá nhân & Giỏ hàng", href: "/checkout", current: false },
+  { name: "Tình trạng đơn hàng", href: "/orderSumary", current: false },
 ];
 
 function classNames(...classes) {
@@ -36,6 +18,8 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
+  const { currentCustomer, logout } = useCustomer();
+
   return (
     <Disclosure as="header" className="bg-white shadow">
       {({ open }) => (
@@ -54,7 +38,7 @@ export default function Navbar() {
               <div className="relative z-0 flex flex-1 items-center justify-center px-2 sm:absolute sm:inset-0">
                 <div className="w-full sm:max-w-xs">
                   <label htmlFor="search" className="sr-only">
-                    Search
+                    Tìm kiếm sản phẩm
                   </label>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -84,9 +68,10 @@ export default function Navbar() {
                   )}
                 </Disclosure.Button>
               </div>
-              <div className="hidden lg:relative lg:z-10 lg:ml-4 lg:flex lg:items-center">
+              <div className="hidden lg:space-x-2 lg:relative lg:z-10 lg:ml-4 lg:flex lg:items-center">
                 <DropdownCart />
                 {/* Profile dropdown */}
+                {currentCustomer ? <LogoutButton /> : <LoginAvatar />}
               </div>
             </div>
             <nav
@@ -94,7 +79,7 @@ export default function Navbar() {
               aria-label="Global"
             >
               {navigation.map((item) => (
-                <a
+                <Link
                   key={item.name}
                   href={item.href}
                   className={classNames(
@@ -106,7 +91,7 @@ export default function Navbar() {
                   aria-current={item.current ? "page" : undefined}
                 >
                   {item.name}
-                </a>
+                </Link>
               ))}
             </nav>
           </div>
@@ -114,9 +99,8 @@ export default function Navbar() {
           <Disclosure.Panel as="nav" className="lg:hidden" aria-label="Global">
             <div className="space-y-1 px-2 pt-2 pb-3">
               {navigation.map((item) => (
-                <Disclosure.Button
+                <Link
                   key={item.name}
-                  as="a"
                   href={item.href}
                   className={classNames(
                     item.current
@@ -127,8 +111,30 @@ export default function Navbar() {
                   aria-current={item.current ? "page" : undefined}
                 >
                   {item.name}
-                </Disclosure.Button>
+                </Link>
               ))}
+              {!currentCustomer && (
+                <Link
+                  href={"/login"}
+                  className={classNames(
+                    "text-gray-900 hover:bg-gray-50 hover:text-gray-900",
+                    "block rounded-md py-2 px-3 text-base font-medium"
+                  )}
+                >
+                  Đăng Nhập
+                </Link>
+              )}
+              {currentCustomer && (
+                <button
+                  onClick={() => logout()}
+                  className={classNames(
+                    "text-gray-900 hover:bg-gray-50 hover:text-gray-900",
+                    "block rounded-md py-2 px-3 text-base font-medium"
+                  )}
+                >
+                  Đăng xuất
+                </button>
+              )}
             </div>
           </Disclosure.Panel>
         </>

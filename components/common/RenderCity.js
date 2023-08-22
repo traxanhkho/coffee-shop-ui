@@ -1,28 +1,24 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { classNames } from "@/utils/classNames";
+import { useFormContext } from "react-hook-form";
+import { useCustomer } from "@/context/CustomerContext";
+import { useProduct } from "@/context/ProductContext";
 
 // "http://localhost:5000/api/locationVn"
 // "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json"
 
-function RenderCity({ register, watch, errors }) {
+function RenderCity() {
+  const {
+    register,
+    formState: { errors },
+    watch,
+    resetField,
+    setValue,
+  } = useFormContext();
   const citisValue = watch("city");
   const districtsValue = watch("district");
-  const [locationData, setLocationData] = useState([]);
-
-  const getLocationData = async () => {
-    try {
-      const { data } = await axios.get("https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json");
-      setLocationData(data);
-    } catch (error) {
-      console.log("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-    getLocationData();
-  }, []);
-  // Code for rendering cities
+  const { locationData } = useProduct();
 
   return (
     <>
@@ -48,7 +44,7 @@ function RenderCity({ register, watch, errors }) {
           >
             <option value="">Vui lòng chọn Tỉnh Thành</option>
 
-            {locationData &&
+            {locationData.length &&
               locationData.map((x) => (
                 <option key={x.Id} value={x.Id}>
                   {x.Name}
@@ -85,11 +81,11 @@ function RenderCity({ register, watch, errors }) {
           >
             <option value="">Vui lòng chọn Quận Huyện</option>
 
-            {locationData &&
+            {locationData.length &&
               citisValue &&
               locationData
                 .find((n) => n.Id === citisValue)
-                .Districts.map((k) => (
+                ?.Districts?.map((k) => (
                   <option key={k.Id} value={k.Id}>
                     {k.Name}
                   </option>
@@ -123,7 +119,8 @@ function RenderCity({ register, watch, errors }) {
             {...register("ward")}
           >
             <option value="">Vui lòng chọn Phường Xã</option>
-            {locationData &&
+
+            {locationData.length &&
               citisValue &&
               locationData
                 .find((n) => n.Id === citisValue)
