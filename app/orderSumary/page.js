@@ -1,164 +1,65 @@
 "use client";
 import Layouts from "@/components/Layouts";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import { useCustomer } from "@/context/CustomerContext";
+import Modal from "@/components/common/Modal";
+import Post from "@/components/common/Post";
+import PriceFormmater from "@/components/common/PriceFormmater";
 import { useOrder } from "@/context/OrderContext";
-import { getCurrentCustomer } from "@/utils/getCurrentCustomer";
-import _ from "lodash";
-import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {
+  calculateTotalOrderPrice,
+  calculateTotalProductPrice,
+} from "@/utils/calculateTotalPriceOrders";
 
-const products = [
-  {
-    id: 1,
-    name: "Nomad Tumbler",
-    description:
-      "This durable and portable insulated tumbler will keep your beverage at the perfect temperature during your next adventure.",
-    href: "#",
-    price: "35.00",
-    status: "Trạng thái đơn hàng",
-    step: 1,
-    items: [
-      {
-        _id: "abc1",
-        name: "trà sen vàng",
-        quantity: 2,
-        price: "20.000",
-      },
-      {
-        _id: "abc2",
-        name: "cà phê sữa",
-        quantity: 1,
-        price: "20.000",
-      },
-      {
-        _id: "abc3",
-        name: "cà phê đen",
-        quantity: 4,
-        price: "20.000",
-      },
-      {
-        _id: "abc4",
-        name: "coca cola",
-        quantity: 2,
-        price: "20.000",
-      },
-      {
-        _id: "abc5",
-        name: "tà tưa socola",
-        quantity: 2,
-        price: "20.000",
-      },
-    ],
-    date: "March 24, 2021",
-    datetime: "2021-03-24",
-    address: ["20 trần phú", "Lộc thọ", "Nha trang"],
-    email: "f•••@example.com",
-    note: "mì cay hs cấp 2, mì bò cấp 5.",
-    phone: "0367219606",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/confirmation-page-03-product-01.jpg",
-    imageAlt: "Insulated bottle with white base and black snap lid.",
-  },
-  {
-    id: 2,
-    name: "Minimalist Wristwatch",
-    description:
-      "This contemporary wristwatch has a clean, minimalist look and high quality components.",
-    href: "#",
-    price: "149.00",
-    status: "Shipped",
-    step: 0,
-    items: [
-      {
-        _id: "abc1",
-        name: "trà sen vàng",
-        quantity: 2,
-        price: "20.000",
-      },
-      {
-        _id: "abc2",
-        name: "cà phê sữa",
-        quantity: 1,
-        price: "20.000",
-      },
-      {
-        _id: "abc3",
-        name: "cà phê đen",
-        quantity: 4,
-        price: "20.000",
-      },
-      {
-        _id: "abc4",
-        name: "coca cola",
-        quantity: 2,
-        price: "20.000",
-      },
-      {
-        _id: "abc5",
-        name: "tà tưa socola",
-        quantity: 2,
-        price: "20.000",
-      },
-    ],
-    date: "March 23, 2021",
-    datetime: "2021-03-23",
-    address: ["30 tân hải", "Vĩnh trường", "Nha trang"],
-    email: "f•••@example.com",
-    note: "cho e nhiều rau ít cay nhé.",
-    phone: "0367219606",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/confirmation-page-03-product-02.jpg",
-    imageAlt:
-      "Arm modeling wristwatch with black leather band, white watch face, thin watch hands, and fine time markings.",
-  },
-  // More products...
-];
+import _ from "lodash";
+import { useRouter } from "next/navigation";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function OrderSumary() {
-  const { currentCustomer } = useCustomer();
-  const router = useRouter();
   const { orders } = useOrder();
+  const router = useRouter();
 
-  const renderOrder = (items) => {
-    const chunks = _.chunk(items, Math.ceil(items.length / 2)).slice(0, 2);
+  const renderOrder = (products) => {
+    const chunks = _.chunk(products, Math.ceil(products.length / 2)).slice(
+      0,
+      2
+    );
 
     let ordinalNumber = 0;
 
-    return chunks.map((chunk, index) => {
-      return (
-        <div key={index}>
-          {chunk.map((item) => {
-            ordinalNumber++;
-            return (
-              <>
-                <div key={item._id} className="flex justify-between">
-                  <p className="text-base">{`${
-                    ordinalNumber < 10 ? `0${ordinalNumber}` : ordinalNumber
-                  }. ${item.name} x ${item.quantity}`}</p>
-                  <span className="text-base">40.000đ</span>
-                </div>
+    return chunks.map((chunk, index) => (
+      <div key={index}>
+        {chunk.map((product) => {
+          ordinalNumber++;
+          return (
+            <div key={product._id}>
+              <div className="flex justify-between items-center">
+                <p className="text-base">{`${
+                  ordinalNumber < 10 ? `0${ordinalNumber}` : ordinalNumber
+                }. ${product.productId.name} x ${product.quantity}`}</p>
+                <PriceFormmater
+                  priceInVND={calculateTotalProductPrice(product) || 0}
+                />
+              </div>
+              {product.note && (
                 <p className="ml-4 text-xs text-gray-500">
-                  *Lưu ý : thêm trân châu
+                  *Lưu ý : {product.note}
                 </p>
-              </>
-            );
-          })}
-        </div>
-      );
-    });
+              )}
+            </div>
+          );
+        })}
+      </div>
+    ));
   };
 
   if (orders.length === 0)
     return (
       <Layouts>
-        <div className="min-h-screen">
-          <p>
+        <Modal onClose={() => router.push("/orderSumary")} />
+        <div className="min-h-screen mx-auto  px-4 py-8 sm:px-6 sm:py-12 lg:max-w-7xl lg:px-8">
+          <p className="text-center">
             Đơn hàng của bạn đang trống , vui lòng đặt hàng hoặc đăng nhập để
             xem lịch sử đơn hàng!
           </p>
@@ -168,38 +69,35 @@ export default function OrderSumary() {
 
   return (
     <Layouts>
+      <Modal onClose={() => router.push("/orderSumary")} />
       <div className="bg-gray-50">
         <div className="mx-auto max-w-2xl pt-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8">
           {/* Products */}
           <div className="mt-6">
             <h2 className="sr-only">Products purchased</h2>
-
             <div className="space-y-8">
-              {products.map((product) => (
-                <div key={product.id}>
+              {orders.map((order) => (
+                <div key={order._id}>
                   <div className="space-y-2 px-4 sm:flex sm:items-baseline sm:justify-between sm:space-y-0 sm:px-0">
                     <div className="flex sm:items-baseline sm:space-x-4">
                       <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-                        Đơn hàng #54879
+                        Đơn hàng #{order._id}
                       </h1>
                     </div>
-                    <p className="text-sm text-gray-600">
-                      Đặt hàng vào{" "}
-                      <time
-                        dateTime="2021-03-22"
-                        className="font-medium text-gray-900"
-                      >
-                        20-08-2023
-                      </time>
-                    </p>
+                    <div>
+                      <Post createdAt={order.createdAt} />
+                    </div>
                   </div>
                   <div className="border-t border-b border-gray-200 bg-white shadow-sm sm:rounded-lg sm:border">
                     <div className="py-6 px-4 sm:px-6 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:p-8">
                       <div className=" lg:col-span-7">
                         <div className="mt-6 sm:mt-0">
-                          <div className="w-full grid grid-cols-1 sm:grid-cols-2 sm:gap-4 text-sm">
-                            {renderOrder(product.items)}
-                          </div>
+                          <dt className="font-medium text-gray-900">
+                            Danh sách sản phẩm
+                          </dt>
+                          <dd className="w-full grid grid-cols-1 sm:grid-cols-2 sm:gap-4 text-sm">
+                            {renderOrder(order.products)}
+                          </dd>
                         </div>
                       </div>
 
@@ -212,21 +110,61 @@ export default function OrderSumary() {
 
                             <dd className="mt-2 flex-column text-black-400">
                               <p>Phí ship: 0đ</p>
-                              <p>Phụ phí (thời tiết xấu): 8.000đ</p>
+                              <p>Phụ phí (thời tiết xấu): 0đ</p>
                               <h4 className="font-medium">
-                                Tổng đơn hàng: 128.000đ
+                                Tổng đơn hàng:{" "}
+                                <PriceFormmater
+                                  className={"inline"}
+                                  priceInVND={
+                                    calculateTotalOrderPrice(order) || 0
+                                  }
+                                />
                               </h4>
                             </dd>
                           </div>
                           <div>
                             <dt className="font-medium text-gray-900">
-                              Địa chỉ giao hàng
+                              Thông tin giao hàng
                             </dt>
                             <dd className="mt-3 space-y-3 text-gray-500">
-                              <span>{product.address[0]}, </span>
-                              <span>{product.address[1]}, </span>
-                              <span>{product.address[2]}</span>
-                              <p>{product.phone}</p>
+                              <span>
+                                {
+                                  order.orderShippingAddressInformation.address
+                                    .city.name
+                                }
+                                ,{" "}
+                              </span>
+                              <span>
+                                {
+                                  order.orderShippingAddressInformation.address
+                                    .district.name
+                                }
+                                ,{" "}
+                              </span>
+                              <span>
+                                {
+                                  order.orderShippingAddressInformation.address
+                                    .ward.name
+                                }
+                                ,{" "}
+                              </span>
+                              <span>
+                                {
+                                  order.orderShippingAddressInformation.address
+                                    .street
+                                }
+                              </span>
+                              <p>
+                                số liên hệ:{" "}
+                                {
+                                  order.orderShippingAddressInformation
+                                    .numberPhone
+                                }
+                              </p>
+                              <p>
+                                Tên Khách hàng :{" "}
+                                {order.orderShippingAddressInformation.name}
+                              </p>
                             </dd>
                           </div>
                         </dl>
@@ -243,7 +181,7 @@ export default function OrderSumary() {
                           <div
                             className="h-2 rounded-full bg-indigo-600"
                             style={{
-                              width: `calc((${product.step} * 2 + 1) / 8 * 100%)`,
+                              width: `calc((${order.status.step} * 2 + 1) / 8 * 100%)`,
                             }}
                           />
                         </div>
@@ -251,7 +189,7 @@ export default function OrderSumary() {
                           <div className="text-indigo-600">Đã đặt hàng</div>
                           <div
                             className={classNames(
-                              product.step > 0 ? "text-indigo-600" : "",
+                              order.status.step > 0 ? "text-indigo-600" : "",
                               "text-center"
                             )}
                           >
@@ -259,20 +197,32 @@ export default function OrderSumary() {
                           </div>
                           <div
                             className={classNames(
-                              product.step > 1 ? "text-indigo-600" : "",
+                              order.status.step > 1 ? "text-indigo-600" : "",
                               "text-center"
                             )}
                           >
                             Đang vận chuyển
                           </div>
-                          <div
-                            className={classNames(
-                              product.step > 2 ? "text-indigo-600" : "",
-                              "text-right"
-                            )}
-                          >
-                            Đã giao hàng
-                          </div>
+                          {order.status.step !== 5 && (
+                            <div
+                              className={classNames(
+                                order.status.step > 2 ? "text-indigo-600" : "",
+                                "text-right"
+                              )}
+                            >
+                              Đã giao hàng
+                            </div>
+                          )}
+                          {order.status.step === 5 && (
+                            <div
+                              className={classNames(
+                                order.status.step === 5 ? "text-red-600" : "",
+                                "text-right"
+                              )}
+                            >
+                              Giao hàng thất bại
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

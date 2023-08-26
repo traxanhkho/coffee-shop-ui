@@ -1,3 +1,5 @@
+import axios from "axios";
+import { toast } from "react-toastify";
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { addItemToShoppingCart } from "@/services/shoppingCartServices";
@@ -8,10 +10,22 @@ import QuantityProductForm from "./QuantityProductForm";
 import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import ToppingSelector from "../ToppingSelector";
 import PriceFormmater from "./PriceFormmater";
+import { useSearchParams } from "next/navigation";
+import { calculateTotalPrice } from "@/utils/calculateTotalPrice";
 
-export default function Modal({ open, setOpen }) {
-  const { productSelected , shoppingCart , setShoppingCart} = useProduct();
+
+export default function Modal({ onClose }) {
+  const {
+    shoppingCart,
+    setShoppingCart,
+    openProductModal,
+    setOpenProductModal,
+  } = useProduct();
   const [selectedSize, setSelectedSize] = useState(null);
+  const [productSelected, setProductSelected] = useState(null);
+
+  const searchParams = useSearchParams();
+  
 
   const methods = useForm({
     defaultValues: {
@@ -29,42 +43,71 @@ export default function Modal({ open, setOpen }) {
   });
 
   useEffect(() => {
-    if (!open) reset();
-  }, [open]);
+    if (!openProductModal) {
+      reset();
+      setProductSelected(null);
+      onClose();
+    }
+  }, [openProductModal]);
+
+  const handleGetProductSelect = async (productId) => {
+    try {
+      const { data: product } = await axios.get(
+        `http://localhost:5000/api/products/${productId}`
+      );
+
+      setSelectedSize(product.sizes.find((size) => size.name == "vừa"));
+      setProductSelected(product);
+      setValue("toppings", product.toppings);
+    } catch (ex) {
+      console.error(ex);
+    }
+  };
 
   useEffect(() => {
-    if (productSelected) {
-      setSelectedSize(productSelected.sizes.find((size) => size.name == "vừa"));
-      setValue("toppings", productSelected.toppings);
+    const productId = searchParams.get("productId");
+
+    if (productId) {
+      handleGetProductSelect(productId);
     }
-  }, [productSelected]);
+  }, [searchParams.get("productId")]);
 
   const handleSelectSize = (size) => {
     setSelectedSize(size);
   };
 
   const handleAddToCart = (data) => {
+    if (!productSelected) return console.log("productSelected is null");
     const formItem = _.cloneDeep(data);
     formItem.size = _.cloneDeep(selectedSize);
 
     const productSelectItem = _.pick(productSelected, ["name", "_id", "price"]);
 
     const cartItem = _.assign({}, productSelectItem, formItem);
-    const shoppingCartUpdated = _.concat(shoppingCart, cartItem);
+    const totalAmount = calculateTotalPrice(cartItem);
+    cartItem.totalAmount = totalAmount;
 
+    const shoppingCartUpdated = _.concat(shoppingCart, cartItem);
     setShoppingCart(shoppingCartUpdated);
-    
+
+    console.log(cartItem);
+
     addItemToShoppingCart(shoppingCartUpdated);
+    toast.success("Bạn đã thêm giỏ hàng thành công.", {
+      autoClose: 800,
+      theme: "dark",
+      hideProgressBar: true,
+    });
   };
 
   const onSubmit = (data) => {
     handleAddToCart(data);
-    setOpen(false);
+    setOpenProductModal(false);
   };
 
   return (
-    <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+    <Transition.Root show={openProductModal} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={setOpenProductModal}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -93,7 +136,7 @@ export default function Modal({ open, setOpen }) {
                   <button
                     type="button"
                     className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setOpenProductModal(false)}
                   >
                     <span className="sr-only">Close</span>
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -194,7 +237,7 @@ export default function Modal({ open, setOpen }) {
 
                         {!productSelected?.toppings?.length && (
                           <p className="py-2 px-6">
-                            Hiện tại không còn topping cho sản phẩm này.
+                            Hiện tại không còn topping cho món này.
                           </p>
                         )}
                       </div>

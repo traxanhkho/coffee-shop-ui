@@ -15,13 +15,21 @@ import CountrySelect from "@/components/CountrySelect";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import _ from "lodash";
+import { useOrder } from "@/context/OrderContext";
+import PriceFormmater from "@/components/common/PriceFormmater";
+import Modal from "@/components/common/Modal";
+import { useRouter } from "next/navigation";
 
 export default function Checkout() {
   const { currentCustomer, setCurrentCustomer } = useCustomer();
   const { shoppingCart, locationData, cleanShoppingCart } = useProduct();
+  const { setOrders } = useOrder();
+
+ const router =  useRouter() ; 
 
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
+  const [totalPriceShoppingCart, setTotalPriceShoppingCart] = useState(0);
 
   const methods = useForm();
 
@@ -48,6 +56,14 @@ export default function Checkout() {
   useEffect(() => {
     handleSetDefaultValues();
   }, [currentCustomer]);
+
+  useEffect(() => {
+    if (shoppingCart) {
+      let totalPrice = 0;
+      shoppingCart.forEach((itemCart) => (totalPrice += itemCart.totalAmount));
+      setTotalPriceShoppingCart(totalPrice);
+    }
+  }, []);
 
   const resetCountry = (location) => {
     if (location === "city") {
@@ -120,6 +136,8 @@ export default function Checkout() {
           position: toast.POSITION.BOTTOM_LEFT,
           autoClose: 1200,
           className: "custom-toast",
+          theme: "dark",
+          hideProgressBar: true,
         });
 
         setCurrentCustomer(data);
@@ -133,6 +151,8 @@ export default function Checkout() {
         position: toast.POSITION.BOTTOM_LEFT,
         autoClose: 1200,
         isLoading: false,
+        theme: "dark",
+        hideProgressBar: true,
       });
     }
   };
@@ -196,7 +216,6 @@ export default function Checkout() {
       return product;
     });
 
-
     const orderShoppingCart = {
       orderShippingAddressInformation: _.cloneDeep(
         orderShippingAddressInformation
@@ -214,8 +233,12 @@ export default function Checkout() {
         type: "warning",
         isLoading: false,
         position: toast.POSITION.BOTTOM_LEFT,
-        autoClose: 2400,
+        autoClose: 800,
         className: "custom-toast",
+        theme: "dark",
+        closeButton: true,
+        closeOnClick: true,
+        hideProgressBar: true,
       });
 
     try {
@@ -236,7 +259,11 @@ export default function Checkout() {
           position: toast.POSITION.BOTTOM_LEFT,
           autoClose: 1200,
           isLoading: false,
+          theme: "dark",
+          hideProgressBar: true,
         });
+
+        setOrders((orders) => _.concat(orders, response.data));
 
         cleanShoppingCart();
       }
@@ -248,6 +275,8 @@ export default function Checkout() {
         position: toast.POSITION.BOTTOM_LEFT,
         autoClose: 1200,
         isLoading: false,
+        theme: "dark",
+        hideProgressBar: true,
       });
     }
   };
@@ -255,6 +284,7 @@ export default function Checkout() {
   return (
     <Layouts>
       {/* <ContainerWrapper> */}
+      <Modal onClose={() => router.push('/checkout')}/>
       <div className="py-8">
         <h4 className="text-center font-bold text-3xl">Xác nhận đơn hàng</h4>
         <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-8 gap-y-16 px-4 py-8 sm:px-6 sm:py-12 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
@@ -339,7 +369,7 @@ export default function Checkout() {
               </li>
               <li className="flex items-center justify-between py-4">
                 <p>Thành tiền</p>
-                <p>200.000 đ</p>
+                <PriceFormmater priceInVND={totalPriceShoppingCart} />
               </li>
             </ul>
             <button

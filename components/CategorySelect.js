@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import CategoryCard from "./common/CategoryCard";
 import { useRouter } from "next/navigation";
 import { useProduct } from "@/context/ProductContext";
@@ -41,8 +40,8 @@ export default function CategorySelect() {
 
   const handleSelectCategory = (category) => {
     setCategorySelected(category.name);
-    // const formattedCategory = category.name.replace(/ /g, "-");
-    // router.push(`?categorySelected=${formattedCategory}`);
+    const formattedCategory = category.name.replace(/ /g, "-");
+    router.push(`?categorySelected=${formattedCategory}`);
   };
 
   return (

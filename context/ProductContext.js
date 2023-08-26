@@ -14,6 +14,7 @@ function ProductProvider({ children }) {
   const [locationData, setLocationData] = useState([]);
   const [categories, setCategories] = useState([]);
   const [categorySelected, setCategorySelected] = useState(null);
+  const [openProductModal, setOpenProductModal] = useState(false);
 
   const getDataFromServer = async () => {
     setCategories(await getCategories());
@@ -59,7 +60,9 @@ function ProductProvider({ children }) {
     setShoppingCart,
     setCategorySelected,
     setProductSelected,
-    cleanShoppingCart , 
+    cleanShoppingCart,
+    openProductModal,
+    setOpenProductModal,
   };
 
   return (

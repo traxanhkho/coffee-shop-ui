@@ -1,11 +1,10 @@
-// components/QuantityToppingForm.js
 import { classNames } from "@/utils/classNames";
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 const QuantityToppingForm = ({ fieldIndex, fieldName }) => {
-  const { register, setValue, getValues } = useFormContext();
+  const { setValue } = useFormContext();
   const [quantity, setQuantity] = useState(0);
 
   const updateFieldValue = (value) => {
@@ -13,19 +12,13 @@ const QuantityToppingForm = ({ fieldIndex, fieldName }) => {
   };
 
   const handleDecrease = () => {
-    const currentQuantity = parseInt(
-      getValues(`toppings[${fieldIndex}].quantity`)
-    );
-    const newQuantity = Math.max(currentQuantity - 1, 0);
+    const newQuantity = Math.max(quantity - 1, 0);
     setQuantity(newQuantity);
     updateFieldValue(newQuantity);
   };
 
   const handleIncrease = () => {
-    const currentQuantity = parseInt(
-      getValues(`toppings[${fieldIndex}].quantity`)
-    );
-    const newQuantity = currentQuantity + 1;
+    const newQuantity = quantity + 1;
     setQuantity(newQuantity);
     updateFieldValue(newQuantity);
   };
@@ -45,11 +38,6 @@ const QuantityToppingForm = ({ fieldIndex, fieldName }) => {
         <MinusIcon className="h-5 w-5 text-white" />
       </button>
       <input
-        // {...register(`toppings.${fieldIndex}.${fieldName}`)}
-        // {...register(fieldName, {
-        //   minLength: 0,
-        //   maxLength: 20,
-        // })}
         defaultValue={0}
         type="number"
         className="hidden"

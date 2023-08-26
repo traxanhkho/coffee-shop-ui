@@ -11,7 +11,11 @@ function OrderProvider({ children }) {
   const { currentCustomer } = useCustomer();
 
   const getDataFromServer = async () => {
-    if (currentCustomer) setOrders(await getOrdersByCustomer());
+    if (currentCustomer) {
+      setOrders(await getOrdersByCustomer());
+    } else {
+      setOrders([]);
+    }
   };
 
   useEffect(() => {
@@ -21,6 +25,7 @@ function OrderProvider({ children }) {
   // Function to set the authenticated user
   const dataShare = {
     orders,
+    setOrders,
   };
 
   return (

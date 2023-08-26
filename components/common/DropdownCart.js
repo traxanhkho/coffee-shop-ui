@@ -2,14 +2,24 @@ import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import ProductCard from "./ProductCard";
+import { useProduct } from "@/context/ProductContext";
 
 export default function DropdownCart() {
+  const { shoppingCart } = useProduct();
+  
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="flex-shrink-0 rounded-full border-2 border-orange-400 bg-white p-1 text-black-400 hover:text-gray-500 ">
+        <Menu.Button className="relative flex-shrink-0 rounded-full border-2 border-orange-400 bg-white p-1 text-black-400 hover:text-gray-500 ">
           <span className="sr-only">View notifications</span>
           <ShoppingCartIcon className="h-6 w-6" />
+          {shoppingCart.length !== 0 && (
+            <span className="flex absolute -top-[8px] right-[-8px] w-5 h-5 rounded-full bg-orange-400">
+              <span className="m-auto text-white text-sm">
+                {shoppingCart.length}
+              </span>
+            </span>
+          )}
         </Menu.Button>
       </div>
 

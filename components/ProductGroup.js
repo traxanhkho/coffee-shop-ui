@@ -1,26 +1,22 @@
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useProduct } from "@/context/ProductContext";
+import { useRouter } from "next/navigation";
 import Modal from "./common/Modal";
-import { useState } from "react";
 import PriceFormmater from "./common/PriceFormmater";
 
 export default function ProductGroup() {
-  const [openProductModal, setOpenProductModal] = useState(false);
-  const { products, setProductSelected, categorySelected } = useProduct();
+  const { products, categorySelected, openProductModal, setOpenProductModal } =
+    useProduct();
+  const router = useRouter();
 
-  const handleSelectProduct = (product) => {
-    if (!product) return null;
-    product.quantity = 0;
-    product.toppings = product.toppings.map((topping) => ({
-      ...topping,
-      quantity: 0,
-    }));
-
-    setProductSelected(product);
-  };
+  useEffect(() => {
+    setOpenProductModal(false);
+  }, []);
 
   return (
     <>
-      <Modal open={openProductModal} setOpen={setOpenProductModal} />
+      <Modal onClose={() => router.push("/")}/>
       <div className="bg-white">
         <div className="mx-auto max-w-2xl py-4 px-4 sm:py-6 sm:px-6 lg:max-w-7xl lg:px-8">
           <div className="flex items-center justify-between space-x-4">
@@ -51,19 +47,20 @@ export default function ProductGroup() {
                   </div>
                   <div className="mt-3 text-base font-medium text-gray-900">
                     <h3>
-                      <button
-                        onClick={() => {
-                          handleSelectProduct(product);
-                          setOpenProductModal(true);
-                        }}
+                      <Link
+                        href={`?productId=${product._id}`}
+                        onClick={() => setOpenProductModal(true)}
                         className="text-base font-semibold text-c-black-400"
                       >
                         <span aria-hidden="true" className="absolute inset-0" />
                         {product.name}
-                      </button>
+                      </Link>
                     </h3>
                     <div className="text-sm text-c-gray-200">
-                      <PriceFormmater textBefore="Giá tiền:" priceInVND={product.price} />
+                      <PriceFormmater
+                        textBefore="Giá tiền:"
+                        priceInVND={product.price}
+                      />
                     </div>
                   </div>
                 </div>

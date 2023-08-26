@@ -15,7 +15,7 @@ function ShoppingCartNotiacation({ cartItem }) {
       })}
 
       <div className="absolute text-[16px] right-0 top-1/2 transform -translate-y-1/2">
-        <PriceFormmater priceInVND={cartItem.price} />
+        <PriceFormmater priceInVND={cartItem.totalAmount} />
       </div>
     </div>
   );
