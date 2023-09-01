@@ -39,7 +39,7 @@ export default function CategorySelect() {
   const { setCategorySelected, categories } = useProduct();
 
   const handleSelectCategory = (category) => {
-    setCategorySelected(category.name);
+    setCategorySelected(category);
     const formattedCategory = category.name.replace(/ /g, "-");
     router.push(`?categorySelected=${formattedCategory}`);
   };

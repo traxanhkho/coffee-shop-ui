@@ -11,7 +11,7 @@ export const calculateTotalProductPrice = (product) => {
   if (product.toppings) {
     product.toppings.forEach((topping) => {
       if (topping.quantity)
-        totalPrice += topping.toppingId.price * topping.quantity;
+        totalPrice += topping.toppingId?.price * topping.quantity;
     });
   }
 

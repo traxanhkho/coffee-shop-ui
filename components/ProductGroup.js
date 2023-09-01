@@ -1,13 +1,12 @@
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useProduct } from "@/context/ProductContext";
 import { useRouter } from "next/navigation";
 import Modal from "./common/Modal";
 import PriceFormmater from "./common/PriceFormmater";
 
 export default function ProductGroup() {
-  const { products, categorySelected, openProductModal, setOpenProductModal } =
-    useProduct();
+  const { products, categorySelected, setOpenProductModal } = useProduct();
   const router = useRouter();
 
   useEffect(() => {
@@ -16,13 +15,13 @@ export default function ProductGroup() {
 
   return (
     <>
-      <Modal onClose={() => router.push("/")}/>
+      <Modal onClose={() => router.push("/")} />
       <div className="bg-white">
         <div className="mx-auto max-w-2xl py-4 px-4 sm:py-6 sm:px-6 lg:max-w-7xl lg:px-8">
           <div className="flex items-center justify-between space-x-4">
             <h2 className="text-lg font-medium text-gray-900">
               {categorySelected
-                ? `Danh sách sản phẩm ${categorySelected}`
+                ? `Danh sách sản phẩm ${categorySelected.name}`
                 : "Danh sách tất cả sản phẩm"}
             </h2>
           </div>
@@ -65,7 +64,10 @@ export default function ProductGroup() {
                   </div>
                 </div>
               ))}
-            {!products.length && <p>Danh sách sản phẩm đang trống.</p>}
+            {!products ||
+              (products.length === 0 && (
+                <p className="text-center">Danh sách sản phẩm đang trống.</p>
+              ))}
           </div>
         </div>
       </div>

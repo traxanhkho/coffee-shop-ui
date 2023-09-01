@@ -34,7 +34,7 @@ function ProductProvider({ children }) {
     const updateProduct = async () => {
       try {
         if (categorySelected)
-          setProducts(await getProductsByCategory(categorySelected));
+          setProducts(await getProductsByCategory(categorySelected._id));
         else setProducts(await getProducts());
       } catch (error) {
         console.error(error);

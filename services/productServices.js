@@ -4,7 +4,7 @@ export async function getProductsByCategory(category) {
   try {
     if(!category) return [] ; 
 
-    const response = await axios.get(`http://localhost:5000/api/products?category=${category}`);
+    const response = await axios.get(`http://localhost:5000/api/products/getProductByGenreId/${category}`);
     // setProducts(response.data);
     return response.data;
   } catch (error) {

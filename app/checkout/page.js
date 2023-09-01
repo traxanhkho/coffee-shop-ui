@@ -25,7 +25,7 @@ export default function Checkout() {
   const { shoppingCart, locationData, cleanShoppingCart } = useProduct();
   const { setOrders } = useOrder();
 
- const router =  useRouter() ; 
+  const router = useRouter();
 
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -281,22 +281,43 @@ export default function Checkout() {
     }
   };
 
+  // animation for hover button update .
+
+  const [isHovering, setIsHovering] = useState(false);
+
+  const handleMouseOver = () => {
+    setIsHovering(true);
+  };
+
+  const handleMouseOut = () => {
+    setIsHovering(false);
+  };
+
   return (
     <Layouts>
       {/* <ContainerWrapper> */}
-      <Modal onClose={() => router.push('/checkout')}/>
+      <Modal onClose={() => router.push("/checkout")} />
       <div className="py-8">
         <h4 className="text-center font-bold text-3xl">Xác nhận đơn hàng</h4>
         <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-8 gap-y-16 px-4 py-8 sm:px-6 sm:py-12 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
           <div className="h-full px-6 py-4">
             <div className="flex justify-between align-center ">
               <h2 className="font-semibold">Phương thức nhận hàng</h2>
-              <button
-                onClick={handleSubmit(handleUpdateCustomer)}
-                className="px-2 py-1 rounded-md shadow bg-green-200"
-              >
-                Cập nhật
-              </button>
+              <div className="relative">
+                <button
+                  onClick={handleSubmit(handleUpdateCustomer)}
+                  onMouseOver={handleMouseOver}
+                  onMouseOut={handleMouseOut}
+                  className="px-2 py-1 rounded-md shadow bg-green-200 hover:bg-green-400"
+                >
+                  Cập nhật
+                </button>
+                {isHovering && (
+                  <span className="absolute text-xs block min-w-[160px]  top-0 right-full">
+                    *Lưu ý: Chỉ dùng để cập nhật thông tin chính.
+                  </span>
+                )}
+              </div>
             </div>
             <span className="block h-[2px] w-12 rounded-md mt-2 bg-orange-400"></span>
             <form className="flex-column space-y-6 mt-4">
@@ -343,6 +364,11 @@ export default function Checkout() {
                 />
               </FormProvider>
             </form>
+            <h4 className="text-xs">
+              *Lưu ý: bạn có thể thay đổi địa chỉ và thông tin nhận hàng, và bạn
+              không cần phải nhấn nút cập nhật mỗi lần thay đổi thông tin. Nút
+              cập nhật chỉ dành khi bạn muốn thay đổi thông tin chính.
+            </h4>
           </div>
           <div className="rounded-md relative shadow-lg px-6 py-4">
             <div className="flex justify-between align-center ">
