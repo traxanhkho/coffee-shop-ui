@@ -124,7 +124,7 @@ export default function Checkout() {
 
     try {
       const { data } = await axios.put(
-        `http://localhost:5000/api/customers/${currentCustomer._id}`,
+        `${process.env.API_KEY}/customers/${currentCustomer._id}`,
         customerUpdated
       );
 
@@ -243,7 +243,7 @@ export default function Checkout() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/orders",
+        `${process.env.NEXT_PUBLIC_API_KEY}/orders`,
         orderShoppingCart,
         {
           headers: {

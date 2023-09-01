@@ -15,7 +15,7 @@ function Search(props) {
     const fetchResults = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/products/search?q=${searchTerm}`
+          `${process.env.NEXT_PUBLIC_API_KEY}/products/search?q=${searchTerm}`
         );
         setResults(response.data);
       } catch (error) {

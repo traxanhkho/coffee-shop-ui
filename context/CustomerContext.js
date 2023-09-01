@@ -33,7 +33,7 @@ function CustomerProvider({ children }) {
   const registerCustomer = async (data, setError) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/customers",
+        `${process.env.NEXT_PUBLIC_API_KEY}/customers`,
         data
       );
 
@@ -56,7 +56,7 @@ function CustomerProvider({ children }) {
   const signIn = async (data, setError) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/customers/auth",
+        `${process.env.NEXT_PUBLIC_API_KEY}/customers/auth`,
         data
       );
 

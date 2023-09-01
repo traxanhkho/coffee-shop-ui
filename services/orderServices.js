@@ -3,7 +3,7 @@ import axios from "axios";
 export async function getOrdersByCustomer() {
   try {
     const { data } = await axios.get(
-      "http://localhost:5000/api/orders/getOrdersByCustomer",
+      `${process.env.NEXT_PUBLIC_API_KEY}/orders/getOrdersByCustomer`,
       {
         headers: {
           "x-auth-token": localStorage.getItem("currentCustomer"),

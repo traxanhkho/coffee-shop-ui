@@ -53,7 +53,7 @@ export default function Modal({ onClose }) {
   const handleGetProductSelect = async (productId) => {
     try {
       const { data: product } = await axios.get(
-        `http://localhost:5000/api/products/${productId}`
+        `${process.env.NEXT_PUBLIC_API_KEY}/products/${productId}`
       );
 
       setSelectedSize(product.sizes.find((size) => size.name == "vừa"));

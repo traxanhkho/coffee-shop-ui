@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function getCategories() {
   try {
-    const { data } = await axios.get('http://localhost:5000/api/genres');
+    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_KEY}/genres`);
     return data;
   } catch (error) {
     console.error(error);
