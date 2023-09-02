@@ -124,7 +124,7 @@ export default function Checkout() {
 
     try {
       const { data } = await axios.put(
-        `${process.env.API_KEY}/customers/${currentCustomer._id}`,
+        `${process.env.NEXT_PUBLIC_API_KEY}/customers/${currentCustomer._id}`,
         customerUpdated
       );
 
