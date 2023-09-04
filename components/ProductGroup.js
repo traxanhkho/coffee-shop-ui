@@ -6,7 +6,7 @@ import Modal from "./common/Modal";
 import PriceFormmater from "./common/PriceFormmater";
 
 export default function ProductGroup() {
-  const { products, categorySelected, setOpenProductModal } = useProduct();
+  const { products, categorySelected , setOpenProductModal } = useProduct();
   const router = useRouter();
 
   useEffect(() => {

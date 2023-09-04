@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { getCurrentCustomer } from "@/utils/getCurrentCustomer";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const CustomerContext = createContext();
 
@@ -31,6 +32,10 @@ function CustomerProvider({ children }) {
   }, []);
 
   const registerCustomer = async (data, setError) => {
+    const loading = toast.loading("Đang thực hiện đăng ký.", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_KEY}/customers`,
@@ -39,10 +44,30 @@ function CustomerProvider({ children }) {
 
       if (response.data) {
         router.push("/login");
+        toast.update(loading, {
+          render: "Đăng ký thành công, vui lòng đăng nhập.",
+          type: "success",
+          isLoading: false,
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 2000,
+          className: "custom-toast",
+          theme: "light",
+          hideProgressBar: true,
+        });
       }
 
       return response.data;
     } catch (ex) {
+      toast.update(loading, {
+        render: "Đã xảy ra lỗi.",
+        type: "error",
+        isLoading: false,
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000,
+        className: "custom-toast",
+        theme: "dark",
+        hideProgressBar: true,
+      });
       if (ex.response.status == 400) {
         setError("numberPhone", {
           type: "manual",
@@ -54,6 +79,10 @@ function CustomerProvider({ children }) {
   };
 
   const signIn = async (data, setError) => {
+    const loading = toast.loading("Đang thực hiện đăng nhập.", {
+      position: toast.POSITION.TOP_CENTER,
+    });
+
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_KEY}/customers/auth`,
@@ -64,11 +93,32 @@ function CustomerProvider({ children }) {
         const currentCustomer = await getCurrentCustomer(response.data);
         localStorage.setItem("currentCustomer", response.data);
         setCurrentCustomer(currentCustomer);
+
         router.push("/");
+        toast.update(loading, {
+          render: "Chào mừng bạn comeback.",
+          type: "success",
+          isLoading: false,
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 2000,
+          className: "custom-toast",
+          theme: "light",
+          hideProgressBar: true,
+        });
       }
 
       return response.data;
     } catch (ex) {
+      toast.update(loading, {
+        render: "Đã xảy ra lỗi.",
+        type: "error",
+        isLoading: false,
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000,
+        className: "custom-toast",
+        theme: "dark",
+        hideProgressBar: true,
+      });
       if (ex.response.status == 404) {
         setError("numberPhone", {
           type: "manual",

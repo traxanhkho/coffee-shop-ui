@@ -53,8 +53,10 @@ function ProductProvider({ children }) {
   const productValue = {
     categorySelected,
     products,
+    setProducts,
     productSelected,
     categories,
+    setCategories,
     shoppingCart,
     locationData,
     setShoppingCart,

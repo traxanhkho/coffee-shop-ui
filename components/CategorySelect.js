@@ -1,6 +1,7 @@
 import CategoryCard from "./common/CategoryCard";
 import { useRouter } from "next/navigation";
 import { useProduct } from "@/context/ProductContext";
+import { getProducts } from "@/services/productServices";
 // const categories = [
 //   {
 //     _id: "1",
@@ -36,11 +37,32 @@ import { useProduct } from "@/context/ProductContext";
 
 export default function CategorySelect() {
   const router = useRouter();
-  const { setCategorySelected, categories } = useProduct();
+  const { setCategorySelected, categories, setCategories, setProducts } =
+    useProduct();
 
   const handleSelectCategory = (category) => {
+    if (category.isSelected) {
+      const categoriesReset = categories.map((item) => ({
+        ...item,
+        isSelected: false,
+      }));
+
+      setCategories(categoriesReset);
+      setCategorySelected(null);
+      return router.push("/");
+    }
+
     setCategorySelected(category);
-    const formattedCategory = category.name.replace(/ /g, "-");
+
+    const categoriesUpdate = categories.map((item) =>
+      item._id !== category._id
+        ? { ...item, isSelected: false }
+        : { ...item, isSelected: true }
+    );
+
+    setCategories(categoriesUpdate);
+
+    const formattedCategory = category.name.trimRight().replace(/ /g, "-");
     router.push(`?categorySelected=${formattedCategory}`);
   };
 
@@ -50,7 +72,11 @@ export default function CategorySelect() {
         categories.map((category) => (
           <li key={category._id} className="inline-block">
             <button onClick={() => handleSelectCategory(category)}>
-              <CategoryCard imgUrl={category.image?.url} name={category.name} />
+              <CategoryCard
+                isSelected={category.isSelected}
+                imgUrl={category.image?.url}
+                name={category.name}
+              />
             </button>
           </li>
         ))}
