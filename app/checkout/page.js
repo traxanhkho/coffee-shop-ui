@@ -12,7 +12,7 @@ import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
 import { validateForm } from "@/context/validateForm";
 import CountrySelect from "@/components/CountrySelect";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import _ from "lodash";
 import { useOrder } from "@/context/OrderContext";
@@ -30,12 +30,13 @@ export default function Checkout() {
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
   const [totalPriceShoppingCart, setTotalPriceShoppingCart] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
 
   const methods = useForm();
 
   const { handleSubmit, setError, setValue } = methods;
 
-  const handleSetDefaultValues = () => {
+  const handleSetDefaultValues = useCallback(() => {
     if (currentCustomer?.address && currentCustomer?.name) {
       const defaultValues = {
         name: currentCustomer.name,
@@ -51,19 +52,23 @@ export default function Checkout() {
     } else {
       setValue("numberPhone", currentCustomer?.numberPhone);
     }
-  };
+  }, [currentCustomer, setValue]);
 
   useEffect(() => {
     handleSetDefaultValues();
-  }, [currentCustomer]);
+  }, [handleSetDefaultValues]);
 
-  useEffect(() => {
+  const getTotalPrice = useCallback(() => {
     if (shoppingCart) {
       let totalPrice = 0;
       shoppingCart.forEach((itemCart) => (totalPrice += itemCart.totalAmount));
       setTotalPriceShoppingCart(totalPrice);
     }
-  }, []);
+  }, [shoppingCart]);
+
+  useEffect(() => {
+    getTotalPrice();
+  }, [getTotalPrice]);
 
   const resetCountry = (location) => {
     if (location === "city") {
@@ -282,8 +287,6 @@ export default function Checkout() {
   };
 
   // animation for hover button update .
-
-  const [isHovering, setIsHovering] = useState(false);
 
   const handleMouseOver = () => {
     setIsHovering(true);

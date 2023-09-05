@@ -31,7 +31,7 @@ export default function Navbar() {
           : { ...item, current: true }
       );
     });
-  }, []);
+  }, [pathname]);
 
   return (
     <Disclosure as="header" className="bg-white shadow">

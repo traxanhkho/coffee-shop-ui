@@ -1,17 +1,21 @@
 import Link from "next/link";
-import { useEffect } from "react";
 import { useProduct } from "@/context/ProductContext";
 import { useRouter } from "next/navigation";
 import Modal from "./common/Modal";
 import PriceFormmater from "./common/PriceFormmater";
+import LazyLoad from "react-lazy-load";
 
 export default function ProductGroup() {
-  const { products, categorySelected , setOpenProductModal } = useProduct();
+  const { products, categorySelected, setOpenProductModal } = useProduct();
   const router = useRouter();
 
-  useEffect(() => {
-    setOpenProductModal(false);
-  }, []);
+  // useEffect(() => {
+  //   const closeModal = () => {
+  //     if (openProductModal) setOpenProductModal(false);
+  //   };
+
+  //   closeModal();
+  // }, [openProductModal, setOpenProductModal]);
 
   return (
     <>
@@ -64,11 +68,107 @@ export default function ProductGroup() {
                   </div>
                 </div>
               ))}
-            {!products ||
-              (products.length === 0 && (
-                <p className="text-center">Danh sách sản phẩm đang trống.</p>
-              ))}
           </div>
+          {!products && (
+            <LazyLoad>
+              <div className="mt-6 grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-4 sm:gap-y-10 lg:grid-cols-4">
+                <div className="group relative">
+                  <div className="aspect-w-4 aspect-h-4 overflow-hidden rounded-lg bg-gray-100">
+                    <div className="object-cover object-center bg-gray-200"></div>
+                    <div
+                      className="flex items-end p-4 opacity-0 group-hover:opacity-100"
+                      aria-hidden="true"
+                    >
+                      <div className="w-full rounded-md bg-white bg-opacity-75 py-2 px-4 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
+                        Thêm vào giỏ hàng
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 text-base font-medium text-gray-900">
+                    <h3>
+                      <div className="text-base font-semibold text-c-black-400">
+                        <span aria-hidden="true" className="absolute inset-0" />
+                        loading...
+                      </div>
+                    </h3>
+                    <div className="text-sm text-c-gray-200">loading...</div>
+                  </div>
+                </div>
+                <div className="group relative">
+                  <div className="aspect-w-4 aspect-h-4 overflow-hidden rounded-lg bg-gray-100">
+                    <div className="object-cover object-center bg-gray-200"></div>
+                    <div
+                      className="flex items-end p-4 opacity-0 group-hover:opacity-100"
+                      aria-hidden="true"
+                    >
+                      <div className="w-full rounded-md bg-white bg-opacity-75 py-2 px-4 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
+                        Thêm vào giỏ hàng
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 text-base font-medium text-gray-900">
+                    <h3>
+                      <div className="text-base font-semibold text-c-black-400">
+                        <span aria-hidden="true" className="absolute inset-0" />
+                        loading...
+                      </div>
+                    </h3>
+                    <div className="text-sm text-c-gray-200">loading...</div>
+                  </div>
+                </div>
+                <div className="group relative">
+                  <div className="aspect-w-4 aspect-h-4 overflow-hidden rounded-lg bg-gray-100">
+                    <div className="object-cover object-center bg-gray-200"></div>
+                    <div
+                      className="flex items-end p-4 opacity-0 group-hover:opacity-100"
+                      aria-hidden="true"
+                    >
+                      <div className="w-full rounded-md bg-white bg-opacity-75 py-2 px-4 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
+                        Thêm vào giỏ hàng
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 text-base font-medium text-gray-900">
+                    <h3>
+                      <div className="text-base font-semibold text-c-black-400">
+                        <span aria-hidden="true" className="absolute inset-0" />
+                        loading...
+                      </div>
+                    </h3>
+                    <div className="text-sm text-c-gray-200">loading...</div>
+                  </div>
+                </div>
+                <div className="group relative">
+                  <div className="aspect-w-4 aspect-h-4 overflow-hidden rounded-lg bg-gray-100">
+                    <div className="object-cover object-center bg-gray-200"></div>
+                    <div
+                      className="flex items-end p-4 opacity-0 group-hover:opacity-100"
+                      aria-hidden="true"
+                    >
+                      <div className="w-full rounded-md bg-white bg-opacity-75 py-2 px-4 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
+                        Thêm vào giỏ hàng
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 text-base font-medium text-gray-900">
+                    <h3>
+                      <div className="text-base font-semibold text-c-black-400">
+                        <span aria-hidden="true" className="absolute inset-0" />
+                        loading...
+                      </div>
+                    </h3>
+                    <div className="text-sm text-c-gray-200">loading...</div>
+                  </div>
+                </div>
+              </div>
+            </LazyLoad>
+          )}
+
+          {products?.length === 0 && (
+            <p className="text-center">
+              Danh sách sản phẩm hiện tại đang trống.
+            </p>
+          )}
         </div>
       </div>
     </>

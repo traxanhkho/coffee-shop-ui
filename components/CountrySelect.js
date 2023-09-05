@@ -1,7 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import { classNames } from "@/utils/classNames";
 import { useCustomer } from "@/context/CustomerContext";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 export default function CountrySelect({
   fieldName,
@@ -17,9 +17,13 @@ export default function CountrySelect({
   } = useFormContext();
   const { currentCustomer } = useCustomer();
 
-  useEffect(() => {
+  const handleSetCurrentCustomer = useCallback(() => {
     if (!currentCustomer?.address) setValue(fieldName, "");
-  }, []);
+  }, [currentCustomer, setValue, fieldName]);
+
+  useEffect(() => {
+    handleSetCurrentCustomer();
+  }, [handleSetCurrentCustomer]);
 
   const onTagsChange = (event) => {
     resetCountry(fieldName);

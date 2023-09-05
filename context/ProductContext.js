@@ -8,7 +8,7 @@ import { getLocationData } from "@/utils/getLocationData";
 const ProductContext = createContext();
 
 function ProductProvider({ children }) {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState();
   const [productSelected, setProductSelected] = useState(null);
   const [shoppingCart, setShoppingCart] = useState([]);
   const [locationData, setLocationData] = useState([]);
@@ -16,17 +16,16 @@ function ProductProvider({ children }) {
   const [categorySelected, setCategorySelected] = useState(null);
   const [openProductModal, setOpenProductModal] = useState(false);
 
-  const getDataFromServer = async () => {
-    setCategories(await getCategories());
-    setLocationData(await getLocationData());
-
-    const storedCart = localStorage.getItem("shoppingCart");
-    if (storedCart) {
-      setShoppingCart(JSON.parse(storedCart));
-    }
-  };
-
   useEffect(() => {
+    const getDataFromServer = async () => {
+      setCategories(await getCategories());
+      setLocationData(await getLocationData());
+
+      const storedCart = localStorage.getItem("shoppingCart");
+      if (storedCart) {
+        setShoppingCart(JSON.parse(storedCart));
+      }
+    };
     getDataFromServer();
   }, []);
 

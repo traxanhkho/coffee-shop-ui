@@ -1,6 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { addItemToShoppingCart } from "@/services/shoppingCartServices";
 import { PencilSquareIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -13,7 +13,6 @@ import PriceFormmater from "./PriceFormmater";
 import { useSearchParams } from "next/navigation";
 import { calculateTotalPrice } from "@/utils/calculateTotalPrice";
 
-
 export default function Modal({ onClose }) {
   const {
     shoppingCart,
@@ -21,11 +20,11 @@ export default function Modal({ onClose }) {
     openProductModal,
     setOpenProductModal,
   } = useProduct();
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [productSelected, setProductSelected] = useState(null);
 
   const searchParams = useSearchParams();
-  
+
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [productSelected, setProductSelected] = useState(null);
 
   const methods = useForm({
     defaultValues: {
@@ -42,15 +41,22 @@ export default function Modal({ onClose }) {
     name: "toppings",
   });
 
-  useEffect(() => {
+  const handleResetModal = useCallback(() => {
     if (!openProductModal) {
       reset();
       setProductSelected(null);
       onClose();
     }
-  }, [openProductModal]);
+  }, [openProductModal, onClose, reset, setProductSelected]);
 
-  const handleGetProductSelect = async (productId) => {
+  useEffect(() => {
+    handleResetModal();
+  }, [handleResetModal]);
+
+  const handleGetProductSelect = useCallback(async () => {
+    const productId = searchParams.get("productId");
+    if (!productId) return;
+
     try {
       const { data: product } = await axios.get(
         `${process.env.NEXT_PUBLIC_API_KEY}/products/${productId}`
@@ -62,15 +68,11 @@ export default function Modal({ onClose }) {
     } catch (ex) {
       console.error(ex);
     }
-  };
+  }, [searchParams, setValue]);
 
   useEffect(() => {
-    const productId = searchParams.get("productId");
-
-    if (productId) {
-      handleGetProductSelect(productId);
-    }
-  }, [searchParams.get("productId")]);
+    handleGetProductSelect();
+  }, [handleGetProductSelect]);
 
   const handleSelectSize = (size) => {
     setSelectedSize(size);
@@ -89,8 +91,6 @@ export default function Modal({ onClose }) {
 
     const shoppingCartUpdated = _.concat(shoppingCart, cartItem);
     setShoppingCart(shoppingCartUpdated);
-
-    console.log(cartItem);
 
     addItemToShoppingCart(shoppingCartUpdated);
     toast.success("Bạn đã thêm giỏ hàng thành công.", {

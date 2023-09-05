@@ -1,4 +1,3 @@
-import { CheckIcon } from "@heroicons/react/24/solid";
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -18,8 +17,7 @@ export default function LocationStepSelect({ setStep, step }) {
     } else if (step == "district") {
       resetField("ward");
     }
-  }, [step]);
-
+  }, [step, resetField]);
 
   return (
     <nav aria-label="Progress">

@@ -37,7 +37,7 @@ import { getProducts } from "@/services/productServices";
 
 export default function CategorySelect() {
   const router = useRouter();
-  const { setCategorySelected, categories, setCategories, setProducts } =
+  const { setCategorySelected, categories, setCategories } =
     useProduct();
 
   const handleSelectCategory = (category) => {
