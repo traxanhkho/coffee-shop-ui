@@ -29,8 +29,9 @@ Note: Due to the use of free hosting, the access speed may be slow. Thank you fo
    ```
 
 4. Configure the application by updating the necessary environment variables, such as API keys and database connections, in the `.env` file.
+   - Download the `.env` file and rename it to `env.local`.
    ```
-   Download env.local : https://drive.google.com/file/d/1-6geK2CDdpL6zwwR8qJR4Q9XxOunmOdv/view?usp=drive_link
+   https://drive.google.com/file/d/1-6geK2CDdpL6zwwR8qJR4Q9XxOunmOdv/view?usp=drive_link
    ```
 
 6. Start the application:
